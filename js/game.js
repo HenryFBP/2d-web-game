@@ -1,3 +1,4 @@
+// import { HWorld } from "./world"; //TODO why does this break everything?
 var fs = require('fs');
 var path = require('path');
 var yaml = require('js-yaml');
@@ -10,18 +11,20 @@ var SimpleGame = /** @class */ (function () {
             update: this.update,
             render: this.render,
         });
+        this.world = new HWorld(this.game, 20, 20);
+        this.world.drawline(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
     }
     SimpleGame.prototype.preload = function () {
+        var _this = this;
         this.game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
         this.game.load.image('stone', 'assets/stone.png');
-        this.controls = yaml.safeLoad(fs.readFileSync('data/controls.yml', 'utf8'));
-        this.buttons = {};
+        var buttons = yaml.safeLoad(fs.readFileSync('data/controls.yml', 'utf8'));
+        this.controls = Object();
+        Object.keys(buttons).forEach(function (key) {
+            var value = _this.controls[key];
+            _this.controls[key] = _this.game.input.keyboard.addKey(Phaser.KeyCode[value]);
+        });
         console.log(this.controls);
-        this.buttons['JUMP'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['JUMP']]);
-        this.buttons['LEFT'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['LEFT']]);
-        this.buttons['RIGHT'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['RIGHT']]);
-        this.buttons['UP'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['UP']]);
-        this.buttons['DOWN'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['DOWN']]);
     };
     SimpleGame.prototype.create = function () {
         this.game.world.setBounds(0, 0, 500, 500);
@@ -43,10 +46,6 @@ var SimpleGame = /** @class */ (function () {
         this.player.animations.add('turn', [4], 20, true);
         this.player.animations.add('right', [5, 6, 7, 8], 10, true);
     };
-    SimpleGame.prototype.collisionHandler = function (obj1, obj2) {
-        console.log(obj1);
-        console.log(obj2);
-    };
     SimpleGame.prototype.render = function () {
         this.game.debug.text(this.game.time.suggestedFps.toString(), 32, 32);
     };
@@ -57,14 +56,14 @@ var SimpleGame = /** @class */ (function () {
             _this.game.debug.text("collision!", 32, 48);
         }, null, this);
         this.player.body.velocity.x = 0;
-        if (this.buttons['LEFT'].isDown) {
+        if (this.controls['LEFT'].isDown) {
             this.player.body.velocity.x = -150;
             if (this.facing != 'left') {
                 this.player.animations.play('left');
                 this.facing = 'left';
             }
         }
-        else if (this.buttons['RIGHT'].isDown) {
+        else if (this.controls['RIGHT'].isDown) {
             this.player.body.velocity.x = 150;
             if (this.facing != 'right') {
                 this.player.animations.play('right');
@@ -83,7 +82,7 @@ var SimpleGame = /** @class */ (function () {
                 this.facing = 'idle';
             }
         }
-        if (this.buttons['JUMP'].isDown &&
+        if (this.controls['JUMP'].isDown &&
             (this.player.body.onFloor() || this.player.body.touching.down)) {
             this.player.body.velocity.y = -250;
         }

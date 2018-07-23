@@ -1,3 +1,5 @@
+// import { HWorld } from "./world"; //TODO why does this break everything?
+
 declare function require(name: string);
 
 var fs = require('fs')
@@ -9,9 +11,11 @@ var block;
 class SimpleGame {
 
     facing: String;
-    game: Phaser.Game;
     player: Phaser.Sprite;
-    buttons: {};
+
+    game: Phaser.Game;
+    world: HWorld;
+
     controls: { String: String };
 
     constructor() {
@@ -28,25 +32,27 @@ class SimpleGame {
             },
         );
 
+        this.world = new HWorld(this.game, 20, 20);
+
+        this.world.drawline(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
+
     }
 
     preload() {
         this.game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
         this.game.load.image('stone', 'assets/stone.png');
 
-        this.controls = yaml.safeLoad(fs.readFileSync('data/controls.yml', 'utf8'));
+        let buttons = yaml.safeLoad(fs.readFileSync('data/controls.yml', 'utf8'));
 
-        this.buttons = {};
+        this.controls = Object();
 
-        console.log(this.controls)
+        Object.keys(buttons).forEach((key) => {
+            let value = this.controls[key];
 
-        this.buttons['JUMP'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['JUMP']]);
+            this.controls[key] = this.game.input.keyboard.addKey(Phaser.KeyCode[value]);
+        })
 
-        this.buttons['LEFT'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['LEFT']]);
-        this.buttons['RIGHT'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['RIGHT']]);
-        this.buttons['UP'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['UP']]);
-        this.buttons['DOWN'] = this.game.input.keyboard.addKey(Phaser.KeyCode[this.controls['DOWN']]);
-
+        console.log(this.controls);
     }
 
     create() {
@@ -77,14 +83,6 @@ class SimpleGame {
 
     }
 
-    collisionHandler(obj1: Object, obj2: Object) {
-
-        console.log(obj1);
-        console.log(obj2);
-
-
-    }
-
     render() {
         this.game.debug.text(this.game.time.suggestedFps.toString(), 32, 32);
     }
@@ -93,16 +91,13 @@ class SimpleGame {
 
         // game.physics.arcade.collide(player, layer);
 
-        this.game.physics.arcade.collide(this.player, block,
-            (o1, o2) => {
-                this.game.debug.text("collision!", 32, 48);
-            },
-            null, this);
-
+        this.game.physics.arcade.collide(this.player, block, (o1, o2) => {
+            this.game.debug.text("collision!", 32, 48);
+        }, null, this);
 
         this.player.body.velocity.x = 0;
 
-        if (this.buttons['LEFT'].isDown) {
+        if (this.controls['LEFT'].isDown) {
             this.player.body.velocity.x = -150;
 
             if (this.facing != 'left') {
@@ -110,7 +105,7 @@ class SimpleGame {
                 this.facing = 'left';
             }
         }
-        else if (this.buttons['RIGHT'].isDown) {
+        else if (this.controls['RIGHT'].isDown) {
             this.player.body.velocity.x = 150;
 
             if (this.facing != 'right') {
@@ -133,7 +128,7 @@ class SimpleGame {
             }
         }
 
-        if (this.buttons['JUMP'].isDown &&
+        if (this.controls['JUMP'].isDown &&
             (this.player.body.onFloor() || this.player.body.touching.down)) {
 
             this.player.body.velocity.y = -250;

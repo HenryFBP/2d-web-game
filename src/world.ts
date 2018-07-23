@@ -1,7 +1,8 @@
-/// <reference path="../defs/phaser.d.ts" /> 
 // world.ts
 
-class World {
+/// <reference path="../defs/phaser.d.ts" /> 
+
+class HWorld {
     game: Phaser.Game;
     grid: Array<Array<Block>>;
 
@@ -13,7 +14,7 @@ class World {
     }
 
 
-    drawline(block: Block, x: number, y: number) {
-        
+    drawline(block: Block, p1: Phaser.Point, p2: Phaser.Point) {
+
     }
 }
