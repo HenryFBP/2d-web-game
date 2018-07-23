@@ -13,3 +13,4 @@ bin/
 lib/
 node_modules/
 __pycache__/
+js/*.js
