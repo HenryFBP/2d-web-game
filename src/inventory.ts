@@ -1,0 +1,4 @@
+// inventory.ts
+
+class Inventory {
+}
