@@ -11,17 +11,17 @@ var SimpleGame = /** @class */ (function () {
             update: this.update,
             render: this.render,
         });
-        this.world = new HWorld(this.game, 20, 20);
-        this.world.drawline(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
+        this.world = new HWorld(this, 20, 20);
+        this.world.drawsquare(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
     }
     SimpleGame.prototype.preload = function () {
         var _this = this;
         this.game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
         this.game.load.image('stone', 'assets/stone.png');
         var buttons = yaml.safeLoad(fs.readFileSync('data/controls.yml', 'utf8'));
-        this.controls = Object();
+        this.controls = {};
         Object.keys(buttons).forEach(function (key) {
-            var value = _this.controls[key];
+            var value = buttons[key];
             _this.controls[key] = _this.game.input.keyboard.addKey(Phaser.KeyCode[value]);
         });
         console.log(this.controls);

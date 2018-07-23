@@ -16,7 +16,7 @@ class SimpleGame {
     game: Phaser.Game;
     world: HWorld;
 
-    controls: { String: String };
+    controls: { };
 
     constructor() {
 
@@ -32,9 +32,9 @@ class SimpleGame {
             },
         );
 
-        this.world = new HWorld(this.game, 20, 20);
+        this.world = new HWorld(this, 20, 20);
 
-        this.world.drawline(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
+        this.world.drawsquare(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
 
     }
 
@@ -44,10 +44,10 @@ class SimpleGame {
 
         let buttons = yaml.safeLoad(fs.readFileSync('data/controls.yml', 'utf8'));
 
-        this.controls = Object();
+        this.controls = {};
 
         Object.keys(buttons).forEach((key) => {
-            let value = this.controls[key];
+            let value = buttons[key];
 
             this.controls[key] = this.game.input.keyboard.addKey(Phaser.KeyCode[value]);
         })
