@@ -4,15 +4,40 @@
 
 class Block { //TODO why does `export class Block` break everything?
 
-    sprite: Phaser.Sprite;
+    game: HGame;
 
-    public get width(): number {
-        return this.sprite.width;
-    }
+    /**
+     * What the sprite is called when the image is loaded by Phaser.game.load.image(...)
+     */
+    spritename: String;
 
-    public get height(): number {
-        return this.sprite.height
-    }
+    /**
+     * The sprite only exists if this block is rendered.
+     */
+    sprite?: Phaser.Sprite = undefined;
+
+    name: String = "Stone";
+
+    /**
+     * How wide this block is.
+     */
+    width: number = 16;
+
+    /**
+     * How tall this block is.
+     */
+    height: number = 16;
+
+    /**
+     * x Position in world.
+     */
+    x: number;
+
+    /**
+     * y position in world.
+     */
+    y: number;
+
 
     /**
      * The block is broken by an Entity.
@@ -39,7 +64,27 @@ class Block { //TODO why does `export class Block` break everything?
      */
     on_tick: Function = () => { };
 
-    constructor(sprite?: Phaser.Sprite) {
-        this.sprite = sprite;
+    render() {
+
+        /**
+         * The point we should render this `Block`'s `Sprite` into.
+         */
+        let p = HWorld.resolve_point(
+            new Phaser.Point(this.x, this.y),
+            this,
+        )
+
+        this.sprite = this.game.game.add.sprite(
+            p.x,
+            p.y,
+            this.spritename);
+    }
+
+    derender() {
+
+    }
+
+    constructor(g: Phaser.Game, spritename: String) {
+        this.spritename = spritename;
     }
 }

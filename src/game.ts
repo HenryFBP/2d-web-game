@@ -8,7 +8,7 @@ var yaml = require('js-yaml');
 
 var block;
 
-class SimpleGame {
+class HGame {
 
     facing: String;
     player: Phaser.Sprite;
@@ -16,7 +16,7 @@ class SimpleGame {
     game: Phaser.Game;
     world: HWorld;
 
-    controls: { };
+    controls: {};
 
     constructor() {
 
@@ -34,7 +34,11 @@ class SimpleGame {
 
         this.world = new HWorld(this, 20, 20);
 
-        this.world.drawsquare(new Block(), new Phaser.Point(0, 0), new Phaser.Point(5, 0));
+        this.world.drawsquare(
+            new Block(this.game, "stone"),
+            new Phaser.Point(0, 0),
+            new Phaser.Point(2, 3)
+        );
 
     }
 
@@ -62,11 +66,18 @@ class SimpleGame {
         this.game.time.desiredFps = 60;
         this.game.physics.arcade.gravity.y = 250;
 
-        this.player = this.game.add.sprite(this.game.world.bounds.width - 100, this.game.world.bounds.height - 200, 'dude');
+        this.player = this.game.add.sprite(
+            this.game.world.bounds.width - 100,
+            this.game.world.bounds.height - 200,
+            'dude');
+
         this.game.physics.enable(this.player, Phaser.Physics.ARCADE);
         this.game.camera.follow(this.player);
 
-        block = this.game.add.sprite(this.game.world.bounds.width - 100, this.game.world.bounds.height - 75, 'stone');
+        block = this.game.add.sprite(
+            this.game.world.bounds.width - 100,
+            this.game.world.bounds.height - 75,
+            'stone');
 
         this.game.physics.enable(block, Phaser.Physics.ARCADE);
         block.body.allowGravity = false;
@@ -137,4 +148,4 @@ class SimpleGame {
 }
 
 
-var game = new SimpleGame();
+var game = new HGame();
