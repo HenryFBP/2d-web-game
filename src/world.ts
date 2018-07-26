@@ -17,6 +17,21 @@ class HWorld {
         this.height = height;
 
         this.grid = [];
+		
+		// Set up the world's grid.
+		for(let x = 0; x < this.width; x++) {
+
+			let row: Array<Block> = [];
+			
+			for(let y = 0; y < this.height; y++)
+			{
+				let b = new Block(this.game.game, 'stone');
+
+				row.push(b);
+			}
+			
+			this.grid.push(row);
+		}
     }
 
     /**
@@ -83,6 +98,8 @@ class HWorld {
                 let gamepoint = HWorld.resolve_point(p, bp)
 
                 console.log("For point ", p.toString(), ", we would have drawn it at ", gamepoint.toString());
+				
+				
             }
         }
     }
