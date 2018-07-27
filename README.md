@@ -1,3 +1,7 @@
+# Note: This project is suspended until I can figure out how to use TypeScript + Phaser 2.
+
+You can find the new project at [this](https://github.com/HenryFBP/2d-python-game) location.
+
 # How do I setup this project?
 
 1. Install `nw.js` from [here](https://nwjs.io/).
