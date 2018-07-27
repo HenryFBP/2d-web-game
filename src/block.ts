@@ -79,12 +79,21 @@ class Block { //TODO why does `export class Block` break everything?
             p.y,
             this.spritename);
     }
+	
+	/**
+	 * Only renders if `sprite == false`.
+	 */
+	rendersafe() {
+		if(!this.sprite) {
+			this.render();
+		}
+	}
 
     derender() {
 
     }
 
-    constructor(g: Phaser.Game, spritename: String) {
+    constructor(g: Phaser.Game, spritename: String, dim?: Phaser.Point, pos?: Phaser.Point) {
         this.spritename = spritename;
     }
 }
